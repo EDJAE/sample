@@ -3,6 +3,7 @@ const THEME_KEY = "taskly.theme";
 
 const form = document.getElementById("taskForm");
 const input = document.getElementById("taskInput");
+const dueInput = document.getElementById("dueInput");
 const list = document.getElementById("taskList");
 const empty = document.getElementById("empty");
 const stats = document.getElementById("stats");
@@ -46,9 +47,17 @@ function render() {
     checkbox.checked = task.done;
     checkbox.addEventListener("change", () => toggleTask(task.id));
 
+    const body = document.createElement("div");
+    body.className = "task-body";
+
     const span = document.createElement("span");
     span.className = "task-text";
     span.textContent = task.text;
+    body.appendChild(span);
+
+    if (task.due) {
+      body.appendChild(createDueBadge(task));
+    }
 
     const del = document.createElement("button");
     del.className = "task-delete";
@@ -57,7 +66,7 @@ function render() {
     del.setAttribute("aria-label", "Delete task");
     del.addEventListener("click", () => deleteTask(task.id));
 
-    li.append(checkbox, span, del);
+    li.append(checkbox, body, del);
     list.appendChild(li);
   });
 
@@ -75,10 +84,43 @@ function render() {
   saveTasks();
 }
 
-function addTask(text) {
+function todayStr() {
+  const now = new Date();
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+function formatDue(due, today) {
+  if (due === today) return "Due today";
+
+  const date = new Date(due + "T00:00:00");
+  const label = date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year:
+      date.getFullYear() === new Date().getFullYear() ? undefined : "numeric",
+  });
+
+  return due < today ? `Overdue · ${label}` : `Due ${label}`;
+}
+
+function createDueBadge(task) {
+  const today = todayStr();
+  const overdue = !task.done && task.due < today;
+  const isToday = !task.done && task.due === today;
+
+  const badge = document.createElement("span");
+  badge.className =
+    "task-due" + (overdue ? " overdue" : isToday ? " today" : "");
+  badge.textContent = formatDue(task.due, today);
+  return badge;
+}
+
+function addTask(text, due) {
   tasks.unshift({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
     text,
+    due: due || null,
     done: false,
   });
   render();
@@ -100,8 +142,9 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   const text = input.value.trim();
   if (!text) return;
-  addTask(text);
+  addTask(text, dueInput.value);
   input.value = "";
+  dueInput.value = "";
   input.focus();
 });
 

@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: #f4f6fb;
   --surface: #ffffff;
   --text: #1d2433;
@@ -13,6 +14,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg: #0f1420;
   --surface: #171e2e;
   --text: #e8ecf5;
@@ -119,6 +121,7 @@ body {
 
 .task-form input {
   flex: 1;
+  min-width: 0;
   padding: 13px 16px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -132,6 +135,11 @@ body {
 .task-form input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+}
+
+.task-form .date-input {
+  flex: 0 0 155px;
+  font-size: 0.92rem;
 }
 
 .btn-primary {
@@ -225,13 +233,44 @@ body {
   flex-shrink: 0;
 }
 
-.task-text {
+.task-body {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-text {
   word-break: break-word;
   transition: color 0.2s ease;
 }
 
 .task-item.done .task-text {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.task-due {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.task-due.today {
+  color: #d97706;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .task-due.today {
+  color: #fbbf24;
+}
+
+.task-due.overdue {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.task-item.done .task-due {
   color: var(--muted);
   text-decoration: line-through;
 }
@@ -306,6 +345,11 @@ body {
 
   .task-form {
     flex-direction: column;
+  }
+
+  .task-form .date-input {
+    flex: 1 1 auto;
+    width: 100%;
   }
 
   .btn-primary {

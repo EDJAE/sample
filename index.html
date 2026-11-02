@@ -17,7 +17,7 @@
   <main class="container">
     <section class="hero">
       <h1>Get things done.</h1>
-      <p>Add your tasks, check them off, and keep your day moving.</p>
+      <p>Add your tasks, set due dates, and keep your day moving.</p>
     </section>
 
     <section class="app" aria-label="Task tracker">
@@ -29,6 +29,12 @@
           autocomplete="off"
           maxlength="120"
           aria-label="New task"
+        >
+        <input
+          type="date"
+          id="dueInput"
+          class="date-input"
+          aria-label="Due date (optional)"
         >
         <button type="submit" class="btn-primary">Add</button>
       </form>
